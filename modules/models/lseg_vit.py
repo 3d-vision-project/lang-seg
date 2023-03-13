@@ -5,7 +5,7 @@ import types
 import math
 import torch.nn.functional as F
 import clip
-
+from .meta import device
 activations = {}
 
 
@@ -221,7 +221,7 @@ def get_readout_oper(vit_features, features, use_readout, start_index=1):
 def _make_pretrained_clip_vitl16_384(
     pretrained, use_readout="ignore", hooks=None, enable_attention_hooks=False
 ):
-    clip_pretrained, _ = clip.load("ViT-B/32", device='cuda', jit=False)
+    clip_pretrained, _ = clip.load("ViT-B/32", device=device, jit=False)
     model = timm.create_model("vit_large_patch16_384", pretrained=pretrained)
 
     hooks = [5, 11, 17, 23] if hooks == None else hooks
@@ -240,7 +240,7 @@ def _make_pretrained_clip_vitl16_384(
 def _make_pretrained_clipRN50x16_vitl16_384(
     pretrained, use_readout="ignore", hooks=None, enable_attention_hooks=False
 ):
-    clip_pretrained, _ = clip.load("RN50x16", device='cuda', jit=False)
+    clip_pretrained, _ = clip.load("RN50x16", device=device, jit=False)
     model = timm.create_model("vit_large_patch16_384", pretrained=pretrained)
 
     hooks = [5, 11, 17, 23] if hooks == None else hooks
@@ -257,7 +257,7 @@ def _make_pretrained_clipRN50x16_vitl16_384(
 
 
 def _make_pretrained_clip_vitb32_384(pretrained, use_readout="ignore", hooks=None, enable_attention_hooks=False):
-    clip_pretrained, _ = clip.load("ViT-B/32", device='cuda', jit=False)
+    clip_pretrained, _ = clip.load("ViT-B/32", device=device, jit=False)
     model = timm.create_model("vit_base_patch32_384", pretrained=pretrained)
 
     hooks = [2, 5, 8, 11] if hooks == None else hooks

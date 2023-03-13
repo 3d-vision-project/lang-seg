@@ -43,6 +43,7 @@ import matplotlib.patches as mpatches
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from data import get_dataset
 import torchvision.transforms as transforms
+from modules.models.meta import device
 
 
 def get_new_pallete(num_cls):
@@ -268,7 +269,11 @@ def load_model():
     args.widehead = True
     args.dataset = 'ade20k'
     args.backbone = 'clip_vitl16_384'
-    args.weights = 'checkpoints/demo_e200.ckpt'
+
+    base_path = os.path.abspath(__file__)
+    args.data_path = f'{base_path}/datasets'
+
+    args.weights = f'{base_path}/checkpoints/demo_e200.ckpt'
     args.ignore_index = 255
 
     module = LSegModule.load_from_checkpoint(
@@ -311,7 +316,7 @@ def load_model():
         model = module
         
     model = model.eval()
-    model = model.cpu()
+    # model = model.cpu()
     scales = (
         [0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25]
         if args.dataset == "citys"
@@ -322,7 +327,7 @@ def load_model():
     model.std = [0.5, 0.5, 0.5]
     evaluator = LSeg_MultiEvalModule(
         model, scales=scales, flip=True
-    ).cuda()
+    ).to(device)
     evaluator.eval()
     
     transform = transforms.Compose(

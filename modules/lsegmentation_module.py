@@ -24,7 +24,7 @@ import numpy as np
 from encoding.utils import SegmentationMetric
 
 class LSegmentationModule(pl.LightningModule):
-    def __init__(self, data_path, dataset, batch_size, base_lr, max_epochs, **kwargs):
+    def __init__(self, data_path, dataset, batch_size, base_lr, max_epochs, default_num_classes=150, **kwargs):
         super().__init__()
 
         self.data_path = data_path
@@ -36,6 +36,7 @@ class LSegmentationModule(pl.LightningModule):
         self.other_kwargs = kwargs
         self.enabled = False #True mixed precision will make things complicated and leading to NAN error
         self.scaler = amp.GradScaler(enabled=self.enabled)
+        self.num_classes = default_num_classes
 
     def forward(self, x):
         return self.net(x)

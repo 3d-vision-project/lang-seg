@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .lseg_blocks import FeatureFusionBlock, Interpolate, _make_encoder, FeatureFusionBlock_custom, forward_vit
+from.meta import device, get_activation, save_activations
 import clip
 import numpy as np
 import pandas as pd
@@ -155,6 +156,9 @@ class LSeg(BaseModel):
 
         self.scratch.output_conv = head
 
+        self.scratch.head1.register_forward_hook(get_activation("scratch.head1"))
+        self.scratch.output_conv.register_forward_hook(get_activation("scratch.output_conv"))
+
         self.text = clip.tokenize(self.labels)    
         
     def forward(self, x, labelset=''):
@@ -201,9 +205,10 @@ class LSeg(BaseModel):
             out = self.scratch.head_block(out, False)
 
         out = self.scratch.output_conv(out)
+
+        save_activations(x)
             
         return out
-
 
 class LSegNet(LSeg):
     """Network for semantic segmentation."""
